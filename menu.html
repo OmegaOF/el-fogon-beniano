@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>El Fogón Beniano</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f1e4;
+            color: #5a3e1b;
+            max-width: 500px;
+            margin: 20px auto;
+            text-align: center;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0,0,0,0.2);
+        }
+        h1 {
+            background-color: #c0392b;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        input, button {
+            margin: 5px;
+            padding: 10px;
+            border-radius: 5px;
+            border: none;
+        }
+        button {
+            background-color: #d35400;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #e67e22;
+        }
+        .menu-item, .order-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            border: 1px solid #5a3e1b;
+            border-radius: 5px;
+            background-color: #fff;
+            margin: 5px 0;
+        }
+        .popup {
+            display: none;
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 15px rgba(0,0,0,0.3);
+        }
+    </style>
+</head>
+<body>
+    <h1>El Fogón Beniano</h1>
+    <button onclick="showPopup()">Agregar Plato</button>
+    <button onclick="clearMenu()">Eliminar Menú</button>
+
+    <div id="popup" class="popup">
+        <h2>Agregar Plato</h2>
+        <input type="text" id="dishName" placeholder="Nombre del plato">
+        <input type="number" id="dishPrice" placeholder="Precio">
+        <button onclick="addDish()">Agregar</button>
+        <button onclick="closePopup()">Cerrar</button>
+    </div>
+
+    <h2>Menú</h2>
+    <div id="menu"></div>
+
+    <h2>Pedido</h2>
+    <div id="order"></div>
+    <h2>Total: Bs <span id="total">0.00</span></h2>
+    <button onclick="clearOrder()">Eliminar Pedido</button>
+
+    <script>
+        let menu = JSON.parse(localStorage.getItem("menu")) || [];
+        let order = [];
+
+        function showPopup() {
+            document.getElementById("popup").style.display = "block";
+        }
+
+        function closePopup() {
+            document.getElementById("popup").style.display = "none";
+        }
+
+        function addDish() {
+            const name = document.getElementById("dishName").value;
+            const price = parseFloat(document.getElementById("dishPrice").value);
+            if (name && !isNaN(price)) {
+                menu.push({ name, price });
+                localStorage.setItem("menu", JSON.stringify(menu));
+                document.getElementById("dishName").value = "";
+                document.getElementById("dishPrice").value = "";
+                closePopup();
+                renderMenu();
+            }
+        }
+
+        function addToOrder(index) {
+            order.push(menu[index]);
+            renderOrder();
+        }
+
+        function clearOrder() {
+            order = [];
+            renderOrder();
+        }
+
+        function clearMenu() {
+            menu = [];
+            localStorage.removeItem("menu");
+            renderMenu();
+        }
+
+        function renderMenu() {
+            const menuDiv = document.getElementById("menu");
+            menuDiv.innerHTML = "";
+            menu.forEach((dish, index) => {
+                menuDiv.innerHTML += `<div class='menu-item'>${dish.name} - Bs ${dish.price.toFixed(2)} <button onclick='addToOrder(${index})'>Añadir</button></div>`;
+            });
+        }
+
+        function renderOrder() {
+            const orderDiv = document.getElementById("order");
+            orderDiv.innerHTML = "";
+            let total = 0;
+            order.forEach(dish => {
+                total += dish.price;
+                orderDiv.innerHTML += `<div class='order-item'>${dish.name} - Bs ${dish.price.toFixed(2)}</div>`;
+            });
+            document.getElementById("total").innerText = total.toFixed(2);
+        }
+
+        renderMenu();
+    </script>
+</body>
+</html>
