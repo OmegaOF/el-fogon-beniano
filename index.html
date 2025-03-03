@@ -92,16 +92,20 @@
         }
 
         function addDish() {
-            const name = document.getElementById("dishName").value;
+            const name = document.getElementById("dishName").value.trim();
             const price = parseFloat(document.getElementById("dishPrice").value);
-            if (name && !isNaN(price)) {
-                menu.push({ name, price });
-                localStorage.setItem("menu", JSON.stringify(menu));
-                document.getElementById("dishName").value = "";
-                document.getElementById("dishPrice").value = "";
-                closePopup();
-                renderMenu();
+
+            if (name === "" || isNaN(price) || price <= 0) {
+                alert("Por favor, ingresa un nombre y un precio válido.");
+                return;
             }
+
+            menu.push({ name, price });
+            localStorage.setItem("menu", JSON.stringify(menu));
+            document.getElementById("dishName").value = "";
+            document.getElementById("dishPrice").value = "";
+            closePopup();
+            renderMenu();
         }
 
         function addToOrder(index) {
@@ -115,9 +119,11 @@
         }
 
         function clearMenu() {
-            menu = [];
-            localStorage.removeItem("menu");
-            renderMenu();
+            if (confirm("¿Estás seguro de que quieres eliminar todo el menú?")) {
+                menu = [];
+                localStorage.removeItem("menu");
+                renderMenu();
+            }
         }
 
         function renderMenu() {
@@ -132,11 +138,16 @@
             const orderDiv = document.getElementById("order");
             orderDiv.innerHTML = "";
             let total = 0;
-            order.forEach(dish => {
+            order.forEach((dish, index) => {
                 total += dish.price;
-                orderDiv.innerHTML += `<div class='order-item'>${dish.name} - Bs ${dish.price.toFixed(2)}</div>`;
+                orderDiv.innerHTML += `<div class='order-item'>${dish.name} - Bs ${dish.price.toFixed(2)} <button onclick='removeFromOrder(${index})'>Eliminar</button></div>`;
             });
             document.getElementById("total").innerText = total.toFixed(2);
+        }
+
+        function removeFromOrder(index) {
+            order.splice(index, 1);
+            renderOrder();
         }
 
         renderMenu();
