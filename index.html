@@ -105,7 +105,7 @@
         }
 
         function addToOrder(index) {
-            order.push(menu[menu]);
+            order.push(menu[index]);
             renderOrder();
         }
 
@@ -124,7 +124,7 @@
             const menuDiv = document.getElementById("menu");
             menuDiv.innerHTML = "";
             menu.forEach((dish, index) => {
-                menuDiv.innerHTML += `<div class='menu-item'>${dish.name} - Bs ${dish.price.toFixed(2)} <button onclick='addToOrder(${menu})'>Añadir</button></div>`;
+                menuDiv.innerHTML += `<div class='menu-item'>${dish.name} - Bs ${dish.price.toFixed(2)} <button onclick='addToOrder(${index})'>Añadir</button></div>`;
             });
         }
 
