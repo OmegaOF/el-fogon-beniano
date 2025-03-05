@@ -121,6 +121,11 @@
             renderOrder();
         }
 
+        function removeFromOrder(index) {
+            order.splice(index, 1);
+            renderOrder();
+        }
+
         function clearOrder() {
             order = [];
             renderOrder();
@@ -150,10 +155,10 @@
             let total = 0;
             let summary = {};
 
-            order.forEach(dish => {
+            order.forEach((dish, index) => {
                 total += dish.price;
                 summary[dish.name] = (summary[dish.name] || 0) + 1;
-                orderDiv.innerHTML += `<div class='order-item'>${dish.name} - Bs ${dish.price.toFixed(2)}</div>`;
+                orderDiv.innerHTML += `<div class='order-item'>${dish.name} - Bs ${dish.price.toFixed(2)} <button onclick='removeFromOrder(${index})'>Eliminar</button></div>`;
             });
 
             for (let dish in summary) {
