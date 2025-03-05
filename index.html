@@ -157,12 +157,14 @@
 
             order.forEach((dish, index) => {
                 total += dish.price;
-                summary[dish.name] = (summary[dish.name] || 0) + 1;
+                summary[dish.name] = summary[dish.name] || { count: 0, subtotal: 0 };
+                summary[dish.name].count += 1;
+                summary[dish.name].subtotal += dish.price;
                 orderDiv.innerHTML += `<div class='order-item'>${dish.name} - Bs ${dish.price.toFixed(2)} <button onclick='removeFromOrder(${index})'>Eliminar</button></div>`;
             });
 
             for (let dish in summary) {
-                orderSummaryDiv.innerHTML += `<p>${summary[dish]} x ${dish}</p>`;
+                orderSummaryDiv.innerHTML += `<p>${summary[dish].count} x ${dish} - Total: Bs ${summary[dish].subtotal.toFixed(2)}</p>`;
             }
 
             document.getElementById("total").innerText = total.toFixed(2);
