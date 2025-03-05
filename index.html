@@ -76,6 +76,8 @@
 
     <h2>Pedido</h2>
     <div id="order"></div>
+    <h2>Detalle del Pedido</h2>
+    <div id="orderSummary"></div>
     <h2>Total: Bs <span id="total">0.00</span></h2>
     <button onclick="clearOrder()">Eliminar Pedido</button>
 
@@ -108,6 +110,12 @@
             renderMenu();
         }
 
+        function removeDish(index) {
+            menu.splice(index, 1);
+            localStorage.setItem("menu", JSON.stringify(menu));
+            renderMenu();
+        }
+
         function addToOrder(index) {
             order.push(menu[index]);
             renderOrder();
@@ -130,24 +138,29 @@
             const menuDiv = document.getElementById("menu");
             menuDiv.innerHTML = "";
             menu.forEach((dish, index) => {
-                menuDiv.innerHTML += `<div class='menu-item'>${dish.name} - Bs ${dish.price.toFixed(2)} <button onclick='addToOrder(${index})'>Añadir</button></div>`;
+                menuDiv.innerHTML += `<div class='menu-item'>${dish.name} - Bs ${dish.price.toFixed(2)} <button onclick='addToOrder(${index})'>Añadir</button> <button onclick='removeDish(${index})'>Eliminar</button></div>`;
             });
         }
 
         function renderOrder() {
             const orderDiv = document.getElementById("order");
+            const orderSummaryDiv = document.getElementById("orderSummary");
             orderDiv.innerHTML = "";
+            orderSummaryDiv.innerHTML = "";
             let total = 0;
-            order.forEach((dish, index) => {
-                total += dish.price;
-                orderDiv.innerHTML += `<div class='order-item'>${dish.name} - Bs ${dish.price.toFixed(2)} <button onclick='removeFromOrder(${index})'>Eliminar</button></div>`;
-            });
-            document.getElementById("total").innerText = total.toFixed(2);
-        }
+            let summary = {};
 
-        function removeFromOrder(index) {
-            order.splice(index, 1);
-            renderOrder();
+            order.forEach(dish => {
+                total += dish.price;
+                summary[dish.name] = (summary[dish.name] || 0) + 1;
+                orderDiv.innerHTML += `<div class='order-item'>${dish.name} - Bs ${dish.price.toFixed(2)}</div>`;
+            });
+
+            for (let dish in summary) {
+                orderSummaryDiv.innerHTML += `<p>${summary[dish]} x ${dish}</p>`;
+            }
+
+            document.getElementById("total").innerText = total.toFixed(2);
         }
 
         renderMenu();
